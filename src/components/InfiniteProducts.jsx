@@ -1,75 +1,59 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { createClientSide } from '@/lib/supabaseClient'
 import { useSearchParams } from 'next/navigation'
 import ProductCard from './ProductCard'
 
 export default function InfiniteProducts({ initialSlug, initialProducts, limit }) {
   const [products, setProducts] = useState(initialProducts)
   const [loading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true) // По умолчанию true для новых фильтров
+  const [hasMore, setHasMore] = useState(true)
   
   const searchParams = useSearchParams()
   const loaderRef = useRef(null)
-  const supabase = createClientSide()
 
-  // 1. Обернули функцию загрузки в useCallback, чтобы она была стабильной
+  // 1. Стабильная функция загрузки
   const fetchProducts = useCallback(async (from, to) => {
-    let query = supabase
-      .from('products')
-      .select('*')
-      .or(`category_slug.eq.${initialSlug},sub_category_slug.eq.${initialSlug}`)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('slug', initialSlug)
+    params.set('from', from.toString())
+    params.set('limit', limit.toString())
 
-    // Динамическая фильтрация
-    searchParams.forEach((value, key) => {
-      if (!value) return; // Пропускаем пустые значения
-
-      if (key === 'min_price') {
-        query = query.gte('price', Number(value)); 
-      } else if (key === 'max_price') {
-        query = query.lte('price', Number(value));
-      } else {
-        const values = searchParams.getAll(key);
-        if (values.length > 0) {
-          query = query.in(key, values);
-        }
-      }
-    });
-
-    const { data, error } = await query
-      .order('created_at', { ascending: false })
-      .order('id', { ascending: true })
-      .range(from, to)
-
-    if (error) {
-      console.error('Supabase Error:', error.message)
+    try {
+      const response = await fetch(`/api/products?${params.toString()}`)
+      
+      if (!response.ok) throw new Error('Ошибка сети')
+      const data = await response.json()
+      return data || []
+    } catch (error) {
+      console.error('Ошибка прокси:', error)
       return []
     }
-    return data || []
-  }, [searchParams, initialSlug, supabase])
+  }, [searchParams, initialSlug, limit])
 
-  // 2. Эффект ПЕРЕЗАГРУЗКИ (когда меняем фильтры)
+  // 2. Сброс при смене фильтров
   useEffect(() => {
+    let isMounted = true
     const refresh = async () => {
       setLoading(true)
       const data = await fetchProducts(0, limit - 1)
-      setProducts(data)
-      // Если вернулось меньше, чем лимит — значит больше товаров нет
-      setHasMore(data.length === limit) 
-      setLoading(false)
+      if (isMounted) {
+        setProducts(data)
+        setHasMore(data.length === limit)
+        setLoading(false)
+      }
     }
     refresh()
+    return () => { isMounted = false }
   }, [fetchProducts, limit])
 
-  // 3. Эффект ПОДГРУЗКИ (бесконечный скролл)
-  const loadMoreProducts = async () => {
+  // 3. Функция подгрузки (теперь стабильная)
+  const loadMoreProducts = useCallback(async () => {
     if (loading || !hasMore) return
     setLoading(true)
 
     const from = products.length 
-    const to = from + limit - 1
-    const data = await fetchProducts(from, to)
+    const data = await fetchProducts(from, from + limit - 1)
 
     if (data.length < limit) {
       setHasMore(false)
@@ -81,27 +65,28 @@ export default function InfiniteProducts({ initialSlug, initialProducts, limit }
       return [...prev, ...unique]
     })
     setLoading(false)
-  }
+  }, [fetchProducts, hasMore, loading, products.length, limit])
 
-  // 4. Наблюдатель за скроллом
+  // 4. Исправленный наблюдатель
   useEffect(() => {
+    const currentLoader = loaderRef.current
+    if (!currentLoader || !hasMore) return
+
     const observer = new IntersectionObserver(
       (entries) => {
-        // Проверяем: элемент в кадре + мы не грузим сейчас + еще есть что грузить
-        if (entries[0].isIntersecting && hasMore && !loading) {
+        if (entries[0].isIntersecting && !loading && hasMore) {
           loadMoreProducts()
         }
       },
-      { threshold: 0.1, rootMargin: '100px' } // Начинаем грузить за 100px до конца
+      { threshold: 0.5, rootMargin: '150px' }
     )
 
-    const currentLoader = loaderRef.current
-    if (currentLoader) observer.observe(currentLoader)
+    observer.observe(currentLoader)
     
     return () => {
       if (currentLoader) observer.unobserve(currentLoader)
     }
-  }, [hasMore, loading, products.length]) // Важные зависимости
+  }, [loadMoreProducts, hasMore, loading]) // Здесь важна зависимость от функции
 
   return (
     <>
@@ -111,10 +96,9 @@ export default function InfiniteProducts({ initialSlug, initialProducts, limit }
         ))}
       </div>
 
-      {/* Элемент-триггер для загрузки */}
       <div 
         ref={loaderRef} 
-        className="h-20 w-full flex justify-center items-center mt-10"
+        className="h-32 w-full flex justify-center items-center mt-10"
       >
         {loading && (
           <div className="flex flex-col items-center gap-2">
@@ -123,15 +107,11 @@ export default function InfiniteProducts({ initialSlug, initialProducts, limit }
           </div>
         )}
         {!hasMore && products.length > 0 && (
-          <p className="text-[10px] text-gray-300 uppercase tracking-widest">Вы просмотрели все модели</p>
+          <p className="text-[10px] text-gray-300 uppercase tracking-widest italic">
+            — Это все изделия в данной категории —
+          </p>
         )}
       </div>
-
-      {!loading && products.length === 0 && (
-        <div className="text-center py-20 border rounded-2xl border-dashed border-gray-100">
-          <p className="text-gray-400 text-sm">Ничего не найдено</p>
-        </div>
-      )}
     </>
   )
 }

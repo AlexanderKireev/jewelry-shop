@@ -4,20 +4,35 @@ import FilterDrawer from "@/components/FilterDrawer";
 import DynamicFilters from "@/components/DynamicFilters";
 import { Suspense } from "react";
 
-export default async function CatalogPage({ params }) {
+export default async function CatalogPage({ params, searchParams }) {
   const { slug } = await params;
+  const sParams = await searchParams; // Получаем текущие фильтры (цена и т.д.)
   const supabase = await createServerSide();
 
   const LIMIT = 6;
 
-  // Первоначальная загрузка для SEO и быстрой отрисовки
-  const { data: initialProducts } = await supabase
+  // 3. Добавляем фильтрацию для первой загрузки
+  let query = supabase
     .from("products")
     .select("*")
-    .or(`category_slug.eq.${slug},sub_category_slug.eq.${slug}`)
+    .or(`category_slug.eq.${slug},sub_category_slug.eq.${slug}`);
+
+  if (sParams.min_price) query = query.gte("price", sParams.min_price);
+  if (sParams.max_price) query = query.lte("price", sParams.max_price);
+
+  const { data: initialProducts } = await query
     .order("created_at", { ascending: false })
     .order("id", { ascending: true })
     .range(0, LIMIT - 1);
+
+  // Первоначальная загрузка для SEO и быстрой отрисовки
+  // const { data: initialProducts } = await supabase
+  //   .from("products")
+  //   .select("*")
+  //   .or(`category_slug.eq.${slug},sub_category_slug.eq.${slug}`)
+  //   .order("created_at", { ascending: false })
+  //   .order("id", { ascending: true })
+  //   .range(0, LIMIT - 1);
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-6 py-10">
@@ -58,6 +73,7 @@ export default async function CatalogPage({ params }) {
               initialSlug={slug}
               initialProducts={initialProducts || []}
               limit={LIMIT}
+              currentFilters={sParams}
             />
           </Suspense>
         </section>
