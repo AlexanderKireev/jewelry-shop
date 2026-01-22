@@ -1,25 +1,25 @@
-'use client'
-import { menuItems } from '@/lib/menuData';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+"use client";
+import { menuItems } from "@/lib/menuData";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 
 export default function DynamicFilters({ categorySlug }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  
+
   // Флаг для блокировки авто-обновления URL во время полного сброса
   const isResetting = useRef(false);
 
   // Локальные состояния для полей цены
-  const [minPrice, setMinPrice] = useState(searchParams.get('min_price') || '');
-  const [maxPrice, setMaxPrice] = useState(searchParams.get('max_price') || '');
+  const [minPrice, setMinPrice] = useState(searchParams.get("min_price") || "");
+  const [maxPrice, setMaxPrice] = useState(searchParams.get("max_price") || "");
 
   // 1. Синхронизация инпутов с URL (нужна для кнопки "Назад" и сброса)
   useEffect(() => {
-    const urlMin = searchParams.get('min_price') || '';
-    const urlMax = searchParams.get('max_price') || '';
-    
+    const urlMin = searchParams.get("min_price") || "";
+    const urlMax = searchParams.get("max_price") || "";
+
     if (urlMin !== minPrice) setMinPrice(urlMin);
     if (urlMax !== maxPrice) setMaxPrice(urlMax);
   }, [searchParams]);
@@ -31,13 +31,15 @@ export default function DynamicFilters({ categorySlug }) {
 
     const timer = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
-      const currentUrlMin = params.get('min_price') || '';
-      const currentUrlMax = params.get('max_price') || '';
+      const currentUrlMin = params.get("min_price") || "";
+      const currentUrlMax = params.get("max_price") || "";
 
       // Обновляем только если есть реальные изменения
       if (minPrice !== currentUrlMin || maxPrice !== currentUrlMax) {
-        if (minPrice) params.set('min_price', minPrice); else params.delete('min_price');
-        if (maxPrice) params.set('max_price', maxPrice); else params.delete('max_price');
+        if (minPrice) params.set("min_price", minPrice);
+        else params.delete("min_price");
+        if (maxPrice) params.set("max_price", maxPrice);
+        else params.delete("max_price");
         router.push(`${pathname}?${params.toString()}`, { scroll: false });
       }
     }, 600);
@@ -51,9 +53,9 @@ export default function DynamicFilters({ categorySlug }) {
     const currentValues = params.getAll(filterId);
 
     if (currentValues.includes(value)) {
-      const newValues = currentValues.filter(v => v !== value);
+      const newValues = currentValues.filter((v) => v !== value);
       params.delete(filterId);
-      newValues.forEach(v => params.append(filterId, v));
+      newValues.forEach((v) => params.append(filterId, v));
     } else {
       params.append(filterId, value);
     }
@@ -63,9 +65,9 @@ export default function DynamicFilters({ categorySlug }) {
   // 4. Функция полного сброса
   const handleReset = () => {
     isResetting.current = true; // Включаем блокировку
-    setMinPrice('');
-    setMaxPrice('');
-    
+    setMinPrice("");
+    setMaxPrice("");
+
     // Очищаем URL полностью
     router.push(pathname, { scroll: false });
 
@@ -77,8 +79,8 @@ export default function DynamicFilters({ categorySlug }) {
 
   // Ищем данные текущей категории в menuData
   let activeSub = null;
-  menuItems.forEach(item => {
-    const found = item.subcategories?.find(sub => sub.slug === categorySlug);
+  menuItems.forEach((item) => {
+    const found = item.subcategories?.find((sub) => sub.slug === categorySlug);
     if (found) activeSub = found;
   });
 
@@ -99,21 +101,19 @@ export default function DynamicFilters({ categorySlug }) {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      
+    <div className="space-y-4 animate-in fade-in duration-500">
       {/* КНОПКА СБРОСА */}
       {hasFilters && (
         <button
           onClick={handleReset}
-          className="w-full py-2.5 text-[10px] font-bold uppercase tracking-widest text-amber-800 bg-amber-50 hover:bg-amber-100 rounded-xl transition-all border border-amber-100"
-        >
-          Очистить все фильтры ×
+          className="w-full cursor-pointer py-2.5 mb-6 bg-[#003366] text-amber-500 text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-[#002855] transition-all shadow-sm">
+          <span>Очистить фильтры</span>
         </button>
       )}
 
       {/* БЛОК ЦЕНЫ */}
-      <div className="border-b border-gray-50 pb-8">
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
+      <div className="border-b border-gray-50 pb-2">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1">
           Цена, ₽
         </h3>
         <div className="flex items-center gap-2">
@@ -122,7 +122,7 @@ export default function DynamicFilters({ categorySlug }) {
             placeholder="От"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="w-full bg-gray-50 border-none rounded-lg py-2 px-3 text-sm focus:ring-1 focus:ring-amber-500 placeholder:text-gray-300"
+            className="w-full bg-gray-50 border border-gray-300 rounded-sm py-2 px-3 text-xs outline-none focus:border-amber-500 transition-all"
           />
           <div className="w-2 h-px bg-gray-300 shrink-0" />
           <input
@@ -130,27 +130,37 @@ export default function DynamicFilters({ categorySlug }) {
             placeholder="До"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="w-full bg-gray-50 border-none rounded-lg py-2 px-3 text-sm focus:ring-1 focus:ring-amber-500 placeholder:text-gray-300"
+            className="w-full bg-gray-50 border border-gray-300 rounded-sm py-2 px-3 text-xs outline-none focus:border-amber-500 transition-all"
           />
         </div>
       </div>
 
       {/* ДИНАМИЧЕСКИЕ СПИСКИ ИЗ MENUDATA */}
       {activeSub.filters.map((filter) => (
-        <div key={filter.id} className="border-b border-gray-50 pb-6 last:border-0">
-          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
+        <div key={filter.id} className="border-b border-gray-50 pb-2 last:border-0">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1">
             {filter.label}
           </h3>
           <div className="flex flex-col gap-3">
             {filter.options.map((option) => (
-              <label key={option} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  checked={searchParams.getAll(filter.id).includes(option)}
-                  onChange={() => handleFilterChange(filter.id, option)}
-                  className="w-4 h-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500 transition-all" 
-                />
-                <span className="group-hover:text-gray-900 transition-colors peer-checked:font-medium">
+              <label key={option} className="flex items-center group cursor-pointer py-1">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={searchParams.getAll(filter.id).includes(option)}
+                    onChange={() => handleFilterChange(filter.id, option)}
+                    className="peer cursor-pointer appearance-none w-4 h-4 border border-gray-300 rounded-sm checked:bg-[#003366] checked:border-[#003366] transition-all"
+                  />
+                  <svg
+                    className="absolute w-4 h-4 text-amber-500 hidden peer-checked:block left-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="4">
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className="ml-3 text-sm group-hover:text-amber-600 transition-colors">
                   {option}
                 </span>
               </label>

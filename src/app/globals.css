@@ -1,27 +1,23 @@
 @import "tailwindcss";
 
-/* Твои основные цвета */
 :root {
   --background: #f9fafb; /* bg-gray-50 из твоего layout */
   --foreground: #171717;
 }
 
-/* Глобальные исправления для мобилок */
 @layer base {
-  html, body {
+  html,
+  body {
     margin: 0;
     padding: 0;
     width: 100%;
-    /* ГЛАВНОЕ: убирает микро-скролл вправо/влево */
-    overflow-x: hidden; 
-    /* Исправляет скачки размеров текста на старых Android */
+    overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
   }
 
   body {
     background: var(--background);
     color: var(--foreground);
-    /* Чтобы футер всегда был внизу, а контент не прыгал */
-    min-height: 100dvh; 
+    min-height: 100dvh;
   }
 }

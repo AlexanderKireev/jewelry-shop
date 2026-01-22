@@ -7,8 +7,9 @@ export default function FilterDrawer({ children }) {
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)} className="md:hidden flex items-center gap-2 bg-white border p-3 rounded-xl shadow-sm mb-4">
-        <Settings2 size={20} /> Фильтры
+      <button onClick={() => setIsOpen(true)} className="md:hidden flex items-center gap-2 bg-[#003366] text-white px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest shadow-md"
+      >
+        <Settings2 size={16} className="text-amber-500" /> Фильтры
       </button>
 
       {isOpen && (

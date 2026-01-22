@@ -1,13 +1,12 @@
-import { Nunito } from "next/font/google"; // Импортируем только Nunito
+import { Nunito } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// Настраиваем Nunito
-const nunito = Nunito({ 
-  subsets: ["latin", "cyrillic"], 
-  weight: ["400", "500", "600", "700", "800"], // Выбираем нужные начертания
-  display: 'swap',
+const nunito = Nunito({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata = {
@@ -18,12 +17,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ru">
-      {/* Применяем шрифт ко всему телу документа через nunito.className */}
-      <body
-        className={`${nunito.className} antialiased bg-gray-50 flex flex-col min-h-screen`}
-      >
+      <body className={`${nunito.className} antialiased bg-white flex flex-col min-h-screen`}>
         <Header />
-        <main className="flex-grow">{children}</main>
+        <main className="grow">{children}</main>
         <Footer />
       </body>
     </html>

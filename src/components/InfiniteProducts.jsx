@@ -88,30 +88,33 @@ export default function InfiniteProducts({ initialSlug, initialProducts, limit }
     }
   }, [loadMoreProducts, hasMore, loading]) // Здесь важна зависимость от функции
 
-  return (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+ // Обнови этот фрагмент в InfiniteProducts.jsx
+return (
+  <>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-0 border-t border-l border-gray-100">
+  {products.map((product) => (
+    <ProductCard key={product.id} product={product} />
+  ))}
+</div>
 
-      <div 
-        ref={loaderRef} 
-        className="h-32 w-full flex justify-center items-center mt-10"
-      >
-        {loading && (
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Загрузка...</span>
-          </div>
-        )}
-        {!hasMore && products.length > 0 && (
-          <p className="text-[10px] text-gray-300 uppercase tracking-widest italic">
-            — Это все изделия в данной категории —
-          </p>
-        )}
-      </div>
-    </>
-  )
+    {/* Секция загрузки */}
+    <div 
+      ref={loaderRef} 
+      className="h-32 w-full flex justify-center items-center mt-10"
+    >
+      {loading && (
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-6 h-6 border-2 border-[#003366] border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Загрузка...</span>
+        </div>
+      )}
+      {!hasMore && products.length > 0 && (
+        <p className="text-[10px] text-gray-300 uppercase tracking-widest italic">
+          — Это все изделия в данной категории —
+        </p>
+      )}
+    </div>
+  </>
+)
+
 }
