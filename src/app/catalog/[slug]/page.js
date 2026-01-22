@@ -9,7 +9,7 @@ export default async function CatalogPage({ params, searchParams }) {
   const sParams = await searchParams;
   const supabase = await createServerSide();
 
-  const LIMIT = 6;
+  const LIMIT = 8;
 
   let query = supabase
     .from("products")

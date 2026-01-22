@@ -2,6 +2,7 @@ import { Nunito } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ScrollToTop from "@/components/ScrollToTop"; // 1. Импортируем
 
 const nunito = Nunito({
   subsets: ["latin", "cyrillic"],
@@ -10,8 +11,10 @@ const nunito = Nunito({
 });
 
 export const metadata = {
-  title: "Магазин 2026 🇲🇩",
-  description: "Будущее ритейла в Молдове",
+  title: "Stronskiy Jewelry | Ювелирные изделия 925 пробы",
+
+  description:
+    "Эксклюзивные украшения Stronskiy Jewelry. Авторский дизайн, безупречное качество серебра 925 пробы и быстрая доставка. Найдите свое идеальное украшение в коллекции 2026 года.",
 };
 
 export default function RootLayout({ children }) {
@@ -21,6 +24,8 @@ export default function RootLayout({ children }) {
         <Header />
         <main className="grow">{children}</main>
         <Footer />
+
+        <ScrollToTop />
       </body>
     </html>
   );
