@@ -1,10 +1,14 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Nunito } from "next/font/google"; // Импортируем только Nunito
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+// Настраиваем Nunito
+const nunito = Nunito({ 
+  subsets: ["latin", "cyrillic"], 
+  weight: ["400", "500", "600", "700", "800"], // Выбираем нужные начертания
+  display: 'swap',
+});
 
 export const metadata = {
   title: "Магазин 2026 🇲🇩",
@@ -14,8 +18,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ru">
+      {/* Применяем шрифт ко всему телу документа через nunito.className */}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 flex flex-col min-h-screen`}>
+        className={`${nunito.className} antialiased bg-gray-50 flex flex-col min-h-screen`}
+      >
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />

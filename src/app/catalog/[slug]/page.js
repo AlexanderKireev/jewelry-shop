@@ -37,6 +37,7 @@ export default async function CatalogPage({ params, searchParams }) {
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-6 py-10">
       <div className="flex flex-col md:flex-row gap-12">
+
         <aside className="hidden md:block w-64 shrink-0">
           <div className="sticky top-40">
             <h2 className="text-xl font-serif font-bold mb-8 italic text-gray-900">
@@ -51,7 +52,7 @@ export default async function CatalogPage({ params, searchParams }) {
         <section className="grow">
           <div className="flex justify-between items-end mb-10 border-b border-gray-100 pb-6">
             <div>
-              <h1 className="text-4xl font-serif font-bold capitalize text-gray-900">
+              <h1 className="text-4xl font-bold capitalize text-gray-900">
                 {slug.replace("-", " ")}
               </h1>
               <p className="text-gray-400 text-[10px] mt-2 uppercase tracking-widest font-bold">

@@ -12,7 +12,7 @@ export default function MobileMenu() {
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="p-2 text-gray-600 hover:text-amber-600 transition-colors"
+        className="p-0 text-white hover:text-amber-500 transition-colors"
       >
         <Menu size={28} />
       </button>

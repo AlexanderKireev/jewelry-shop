@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createClientSide } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, X, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, X, ArrowLeft, LogIn } from "lucide-react";
 
 export default function AuthModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -70,8 +70,12 @@ export default function AuthModal() {
     return (
       <button
         onClick={() => toggleModal(true)}
-        className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-2xl font-medium transition-all shadow-xl shadow-gray-200">
-        Войти
+        className="flex flex-col cursor-pointer items-center text-white hover:text-amber-400 transition-all group"
+      >
+        <LogIn size={22} strokeWidth={1.5} />
+        <span className="text-[10px] font-medium uppercase tracking-wider mt-1 hidden sm:block">
+          Войти
+        </span>
       </button>
     );
 

@@ -8,10 +8,10 @@ export default function MegaMenu() {
   const [activeMenu, setActiveMenu] = useState(null);
 
   return (
-    <nav className="bg-white border-b border-gray-100 hidden md:block relative z-40">
+    <nav className="bg-white border-b border-gray-100 hidden sm:block relative z-40">
       <div className="max-w-7xl mx-auto px-6">
         {/* Основная строка категорий */}
-        <div className="flex justify-center space-x-12 py-4">
+        <div className="flex justify-center space-x-12 py-2">
           {menuItems.map((item) => (
             <div
               key={item.slug}
