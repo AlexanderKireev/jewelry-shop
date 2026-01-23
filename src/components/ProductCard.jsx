@@ -1,34 +1,30 @@
-'use client';
+"use client";
 import { Heart, Star, ShoppingCart } from "lucide-react";
-// import Image from "next/image";
-import Image from "next/image"; // Не забудь импорт в начале файла
+import Image from "next/image";
 
 export default function ProductCard({ product }) {
-  
   const addToCart = (e) => {
     e.preventDefault(); // Чтобы не срабатывал переход по ссылке, если карточка будет ссылкой
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     cart.push(product);
-    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem("cart", JSON.stringify(cart));
     // Вместо alert лучше использовать тихий Toast, но пока оставим логику
     console.log("Добавлено в корзину");
   };
 
   return (
     <div className="group bg-white border border-gray-100 flex flex-col relative transition-all duration-300 hover:border-gray-300">
-      
       {/* 1. БЛОК ИЗОБРАЖЕНИЯ */}
 
-
       <div className="relative aspect-[3/4] overflow-hidden bg-white">
-  <Image
-    src={product.image_url || "/placeholder.png"}
-    alt={product.name}
-    fill // Заполняет контейнер aspect-[3/4]
-    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw" // Подсказка браузеру для выбора размера
-    className="object-contain transition-transform duration-500 group-hover:scale-105" // object-contain не обрезает 800x800
-    priority={false} // Картинки в списке загружаются лениво
-  />
+        <Image
+          src={product.image_url || "/placeholder.png"}
+          alt={product.name}
+          fill // Заполняет контейнер aspect-[3/4]
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw" // Подсказка браузеру для выбора размера
+          className="object-contain transition-transform duration-500 group-hover:scale-105" // object-contain не обрезает 800x800
+          priority={false} // Картинки в списке загружаются лениво
+        />
         {/* Кнопка "Избранное" */}
         <button className="absolute top-2 right-2 p-1.5 bg-white/80 backdrop-blur-sm rounded-full text-gray-400 hover:text-amber-500 transition-colors border border-gray-100 shadow-sm">
           <Heart size={16} strokeWidth={2} />
@@ -62,11 +58,10 @@ export default function ProductCard({ product }) {
           </div>
 
           {/* Минималистичная кнопка корзины */}
-          <button 
+          <button
             onClick={addToCart}
             className="p-2 bg-[#003366] text-white hover:bg-amber-500 transition-colors shadow-sm"
-            title="В корзину"
-          >
+            title="В корзину">
             <ShoppingCart size={16} strokeWidth={2} />
           </button>
         </div>
