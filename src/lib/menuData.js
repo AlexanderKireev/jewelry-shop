@@ -20,6 +20,7 @@ export const menuItems = [
         filters: [
           { id: "lock", label: "Тип замка", options: ["Английский", "Гвоздик", "Продевка"] },
           { id: "color", label: "Цвет золота", options: ["Красное", "Белое"] },
+          { id: "stone", label: "Вставка", options: ["Бриллиант", "Изумруд"] },
         ],
       },
     ],
@@ -42,16 +43,32 @@ export const menuItems = [
   },
 ];
 
-// Функция принимает slug (например, 'koltsa-zoloto') и возвращает весь объект категории
 export function getCategoryBySlug(slug) {
   for (const item of menuItems) {
-    // Если это основная категория
-    if (item.slug === slug) return item;
+    if (item.slug === slug) {
+      // Собираем уникальные фильтры из всех подкатегорий для родительской категории
+      const aggregatedFilters = [];
+      const filterIds = new Set();
 
-    // Если это подкатегория
+      item.subcategories?.forEach(sub => {
+        sub.filters?.forEach(f => {
+          if (!filterIds.has(f.id)) {
+            filterIds.add(f.id);
+            aggregatedFilters.push(f);
+          } else {
+            // Если такой фильтр уже есть (например, "stone"), объединяем опции
+            const existing = aggregatedFilters.find(ex => ex.id === f.id);
+            existing.options = [...new Set([...existing.options, ...f.options])];
+          }
+        });
+      });
+
+      return { ...item, filters: aggregatedFilters, isParent: true };
+    }
+
     if (item.subcategories) {
       const sub = item.subcategories.find((s) => s.slug === slug);
-      if (sub) return sub;
+      if (sub) return { ...sub, isParent: false };
     }
   }
   return null;

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import ProductCard from "./ProductCard";
+import ProductCard from "@/components/ProductCard";
 
 export default function InfiniteProducts({ initialSlug, initialProducts, limit }) {
   const [products, setProducts] = useState(initialProducts);
@@ -97,7 +97,7 @@ export default function InfiniteProducts({ initialSlug, initialProducts, limit }
       </div>
 
       {/* Изменили h-32 на min-h-[100px], убрали mt-10 */}
-      <div ref={loaderRef} className="min-h-[100px] w-full flex justify-center items-center">
+      <div ref={loaderRef} className="min-h-25 w-full flex justify-center items-center">
         {loading && (
           <div className="flex flex-col items-center gap-2">
             <div className="w-6 h-6 border-2 border-[#003366] border-t-transparent rounded-full animate-spin"></div>
@@ -108,7 +108,7 @@ export default function InfiniteProducts({ initialSlug, initialProducts, limit }
         )}
         {!hasMore && products.length > 0 && (
           <p className="text-[10px] text-gray-300 uppercase tracking-widest">
-            — Это ВСЁ, идите на ХУЙ —
+            — Это все товары в данной категории —
           </p>
         )}
       </div>

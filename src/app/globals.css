@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f9fafb; /* bg-gray-50 из твоего layout */
+  --background: #f9fafb;
   --foreground: #171717;
 }
 

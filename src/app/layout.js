@@ -2,7 +2,7 @@ import { Nunito } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ScrollToTop from "@/components/ScrollToTop"; // 1. Импортируем
+import ScrollToTop from "@/components/ScrollToTop";
 
 const nunito = Nunito({
   subsets: ["latin", "cyrillic"],
@@ -24,7 +24,6 @@ export default function RootLayout({ children }) {
         <Header />
         <main className="grow">{children}</main>
         <Footer />
-
         <ScrollToTop />
       </body>
     </html>
